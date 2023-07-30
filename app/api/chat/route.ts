@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     new OpenAIEmbeddings(),
     {
       pineconeIndex,
-      namespace: "demo-ai-chat",
+      namespace: "org_2PZXVGpfS1S8nVXCGhTHpFCtCjq",
       textKey: "pageContent",
     }
   );
