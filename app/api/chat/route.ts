@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     new OpenAIEmbeddings(),
     {
       pineconeIndex,
-      namespace: "org_2PZXVGpfS1S8nVXCGhTHpFCtCjq",
+      namespace: "demo-ai-chat",
       textKey: "pageContent",
     }
   );
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   });
 
   const fasterModel = new ChatOpenAI({
-    streaming: true,
+    streaming: false,
     modelName: "gpt-3.5-turbo",
   });
 
