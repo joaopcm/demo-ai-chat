@@ -35,13 +35,13 @@ export async function POST(req: Request) {
 
   await initPinecone();
 
-  const pineconeIndex = pinecone.Index("documents-embeddings");
+  const pineconeIndex = pinecone.Index("my-index");
   const vectorStore = await PineconeStore.fromExistingIndex(
     new OpenAIEmbeddings(),
     {
       pineconeIndex,
       namespace: "demo-ai-chat",
-      textKey: "pageContent",
+      textKey: "content",
     }
   );
 
