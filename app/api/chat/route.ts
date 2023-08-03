@@ -4,10 +4,10 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { UpstashRedisChatMessageHistory } from "langchain/stores/message/upstash_redis";
 import { ConversationalRetrievalQAChain } from "langchain/chains";
+import { BufferMemory } from "langchain/memory";
 
 import { initPinecone, pinecone } from "@/lib/pinecone";
 import { getRedisClient } from "@/lib/upstash";
-import { BufferMemory } from "langchain/memory";
 
 export const runtime = "edge";
 
@@ -45,14 +45,13 @@ export async function POST(req: Request) {
     }
   );
 
-  const slowerModel = new ChatOpenAI({
+  const mainLLM = new ChatOpenAI({
     streaming: true,
     modelName: "gpt-4",
     callbacks: [handlers],
   });
 
-  const fasterModel = new ChatOpenAI({
-    streaming: false,
+  const underlyingLLM = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
   });
 
@@ -62,7 +61,7 @@ export async function POST(req: Request) {
   });
 
   const chain = ConversationalRetrievalQAChain.fromLLM(
-    slowerModel,
+    mainLLM,
     vectorStore.asRetriever(),
     {
       memory: new BufferMemory({
@@ -73,7 +72,7 @@ export async function POST(req: Request) {
         chatHistory,
       }),
       questionGeneratorChainOptions: {
-        llm: fasterModel,
+        llm: underlyingLLM,
         template: QA_UNDERLYING_PROMPT_TEMPLATE,
       },
     }
